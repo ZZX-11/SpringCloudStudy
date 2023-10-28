@@ -41,7 +41,6 @@
                              targetPackage="com.example.train.member.mapper"
                              type="XMLMAPPER"/>
 
-        <!--控制是生成哪个表-->
         <table tableName="member" domainObjectName="Member"/>
 <!--        <table tableName="passenger" domainObjectName="Passenger"/>-->
     </context>

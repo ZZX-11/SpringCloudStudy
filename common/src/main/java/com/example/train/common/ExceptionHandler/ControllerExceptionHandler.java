@@ -23,6 +23,8 @@ public class ControllerExceptionHandler {
      * @param e
      * @return
      */
+
+//  因为要返回所以也需要加 @ResponseBody
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public CommonResp exceptionHandler(Exception e) {
@@ -57,6 +59,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public CommonResp exceptionHandler(BindException e) {
         CommonResp commonResp = new CommonResp();
+
         LOG.error("校验异常：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         commonResp.setSuccess(false);
         commonResp.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());

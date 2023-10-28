@@ -29,10 +29,10 @@ public class MemberService {
 
     public long register(MemberRegisterReq req) {
         String mobile = req.getMobile();
-//      先查这个手机号是不是已经注册过了
+//      先查这个手机号是不是已经注册过了.没注册则为null，注册了则存在
         Member memberDB = selectByMobile(mobile);
 
-        if (ObjectUtil.isNull(memberDB)) {
+        if (! ObjectUtil.isNull(memberDB)) {
             // return list.get(0).getId();
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }

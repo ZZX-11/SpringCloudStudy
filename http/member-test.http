@@ -14,3 +14,8 @@ Accept: application/json
 ###
 
 POST http://localhost:8001/member/member/register
+Content-Type: application/x-www-form-urlencoded
+
+mobile=
+
+###

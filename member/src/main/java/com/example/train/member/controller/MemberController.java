@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/member")
+// member 模块下的member表。第二个代表是哪个表
 public class MemberController {
     @Resource
     public MemberService memberService;

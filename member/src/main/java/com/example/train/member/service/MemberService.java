@@ -11,6 +11,7 @@ public class MemberService {
     private MemberMapper memberMapper;
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberService.class);
+//  或者@sl4j
 
     public int count(){
         int count = memberMapper.count();

@@ -80,6 +80,7 @@ public class LogAspect {
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
+//        环绕通知 ProceedingJoinPoint 执行proceed方法的作用是让目标方法执行，这也是环绕通知和前置、后置通知方法的一个最大区别。
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
         String[] excludeProperties = {};
         PropertyPreFilters filters = new PropertyPreFilters();

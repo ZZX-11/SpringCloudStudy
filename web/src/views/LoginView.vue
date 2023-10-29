@@ -41,6 +41,7 @@
 import { defineComponent, reactive } from 'vue';
 // import { useRouter } from 'vue-router'
 import axios from "axios";
+import {notification} from "ant-design-vue";
 export default defineComponent({
 // 这里的方法给html调用
 //  给html绑定
@@ -54,18 +55,39 @@ export default defineComponent({
 // values 是一个参数，它表示表单提交成功后的回调函数 onFinish 的参数。values 参数是一个对象，包含了表单中所有字段的值。
 // 当用户在表单中填写完数据并点击提交按钮时，Vue.js 会自动收集表单中的数据，并将其作为参数传递给 onFinish 回调函数。
 // 这样，你就可以在 onFinish 函数中通过 values 参数来访问表单中各个字段的值。
-    const onFinish = values => {
-      console.log('Success:', values);
+    const sendCode = () => {
+      axios.post("http://localhost:8000/member/member/sendCode", {
+        mobile: loginForm.mobile
+      }).then(response => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({ description: '发送验证码成功！' });
+          loginForm.code = "8888";
+        } else {
+          notification.error({ description: data.message });
+        }
+      });
     };
 
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
+    const login = () => {
+      axios.post("http://localhost:8000/member/member/login", loginForm).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({ description: '登录成功！' });
+          // 登录成功，跳到控台主页
+          // router.push("/welcome");
+          // store.commit("setMember", data.content);
+        } else {
+          notification.error({ description: data.message });
+        }
+      })
     };
+
     return {
       loginForm,
-      onFinish,
-      onFinishFailed
-    }
+      sendCode,
+      login
+    };
   },
 });
 </script>

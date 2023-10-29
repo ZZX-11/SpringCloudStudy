@@ -23,3 +23,20 @@ POST http://localhost:8000/member/member/sendCode
 Content-Type: application/x-www-form-urlencoded
 
 mobile=15931166506
+
+###
+POST http://localhost:8000/member/member/login
+Content-Type: application/x-www-form-urlencoded
+# 注意这种方式为表单方式传递参数，前端的post一般为json
+
+mobile=15931166506&code=8888
+###
+POST http://localhost:8000/member/member/login
+Content-Type: application/json
+
+{
+  "mobile": "15931166506",
+  "code": "8888"
+}
+
+

@@ -42,10 +42,13 @@ import { defineComponent, reactive } from 'vue';
 // import { useRouter } from 'vue-router'
 import axios from "axios";
 import {notification} from "ant-design-vue";
+import {useRoute,useRouter} from "vue-router";
+// 花括号（{}）用于指定您要从"vue-router"模块中导入的具名导出项
 export default defineComponent({
 // 这里的方法给html调用
 //  给html绑定
   setup() {
+    const router = useRouter()
 
     const loginForm = reactive({
       mobile: '13000000000',
@@ -75,7 +78,7 @@ export default defineComponent({
         if (data.success) {
           notification.success({ description: '登录成功！' });
           // 登录成功，跳到控台主页
-          // router.push("/welcome");
+          router.push("/");
           // store.commit("setMember", data.content);
         } else {
           notification.error({ description: data.message });

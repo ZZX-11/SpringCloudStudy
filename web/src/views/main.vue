@@ -78,6 +78,8 @@
 
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
+
+// useRoute 是当前路由：当前路由的参数。 useRouter 是管理全局路由的.实现路由的跳转
 export default defineComponent({
   components: {
     UserOutlined,

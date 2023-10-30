@@ -56,7 +56,7 @@ export default defineComponent({
 // 当用户在表单中填写完数据并点击提交按钮时，Vue.js 会自动收集表单中的数据，并将其作为参数传递给 onFinish 回调函数。
 // 这样，你就可以在 onFinish 函数中通过 values 参数来访问表单中各个字段的值。
     const sendCode = () => {
-      axios.post("http://localhost:8000/member/member/sendCode", {
+      axios.post("/member/member/sendCode", {
         mobile: loginForm.mobile
       }).then(response => {
         let data = response.data;
@@ -70,7 +70,7 @@ export default defineComponent({
     };
 
     const login = () => {
-      axios.post("http://localhost:8000/member/member/login", loginForm).then((response) => {
+      axios.post("/member/member/login", loginForm).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({ description: '登录成功！' });

@@ -43,6 +43,7 @@ import { defineComponent, reactive } from 'vue';
 import axios from "axios";
 import {notification} from "ant-design-vue";
 import {useRoute,useRouter} from "vue-router";
+import store from "@/store";
 // 花括号（{}）用于指定您要从"vue-router"模块中导入的具名导出项
 export default defineComponent({
 // 这里的方法给html调用
@@ -79,7 +80,10 @@ export default defineComponent({
           notification.success({ description: '登录成功！' });
           // 登录成功，跳到控台主页
           router.push("/");
-          // store.commit("setMember", data.content);
+          // 通过vuex 存储这个对象，这个函数第一个参数指定要提交的函数，第二个参数指定传递的值
+          console.log(data.content)
+
+          store.commit("setMember", data.content);
         } else {
           notification.error({ description: data.message });
         }

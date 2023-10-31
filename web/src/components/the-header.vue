@@ -1,6 +1,10 @@
 <template>
   <a-layout-header class="header">
     <div class="logo"/>
+
+    <div style="float: right; color: white;">
+      您好：{{member.mobile}}
+    </div>
     <a-menu
         v-model:selectedKeys="selectedKeys1"
         theme="dark"
@@ -11,19 +15,23 @@
       <a-menu-item key="2">nav 2</a-menu-item>
       <a-menu-item key="3">nav 3</a-menu-item>
     </a-menu>
+
   </a-layout-header>
 </template>
 
 <script>
 import {defineComponent, ref} from 'vue';
+import store from "@/store";
 
 export default defineComponent({
   name: "the-header-view",
   //给组件命名.该组件可以在别的地方通过<the-header-view></the-header-view> 这样的方式使用
   setup() {
+    let member = store.state.member
 
     return {
       selectedKeys1: ref(['2']),
+      member
     };
   },
 });

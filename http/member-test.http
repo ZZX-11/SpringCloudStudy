@@ -10,6 +10,7 @@ Accept: application/json
 
 GET http://localhost:8000/member/member/count
 Accept: application/json
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE2OTg3NTkyNzAsIm1vYmlsZSI6IjE1OTMxMTY2NTA2IiwiaWQiOjE3MTg1OTc5MzUxMjc3MjgxMjgsImV4cCI6MTY5ODg0NTY3MCwiaWF0IjoxNjk4NzU5MjcwfQ.6QoPmj6gogzhLtMurAHP6JKsL7jCOWu2d8I4dJo6CXE
 
 ###
 

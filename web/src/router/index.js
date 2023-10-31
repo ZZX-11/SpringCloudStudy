@@ -17,7 +17,15 @@ const routes = [
         loginRequire: true
     },
     component: () => import('../views/main.vue'),
-  }
+    children: [{
+        path: 'welcome',
+        component: () => import('../views/main/welcome.vue'),
+    }]
+   },
+    {
+        path: '',
+        redirect: '/welcome'
+    }
 ]
 // 配置了基本路由信息
 const router = createRouter({

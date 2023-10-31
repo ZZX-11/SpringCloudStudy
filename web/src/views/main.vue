@@ -20,6 +20,7 @@ import TheSiderView from "@/components/the-sider.vue";
 
 // useRoute 是当前路由：当前路由的参数。 useRouter 是管理全局路由的.实现路由的跳转
 export default defineComponent({
+  //  删除掉特有的东西，只负责控台框架的展示
   components: {
     TheSiderView,
     TheHeaderView,

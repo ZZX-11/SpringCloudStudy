@@ -11,18 +11,24 @@ const routes = [
     {
     path: '/',
     name: 'main',
+    component: () => import('../views/main.vue'),
     //  在Vue的路由中，meta是一个用于存储额外信息的对象。它可以在路由配置中的meta字段中定义，并且可以在路由导航过程中访问。
     //  meta对象可以包含任意的自定义属性，用于描述路由的特性或其他相关信息。常见的用法是在路由中定义权限信息，以便在导航守卫中进行权限验证。
     meta: {
         loginRequire: true
     },
-    component: () => import('../views/main.vue'),
     children: [{
+//  二级路由或者说是子路由。拼接上一个路由的路径。比如上一级是/main，这一级在它后面拼接/main/welcome
         path: 'welcome',
         component: () => import('../views/main/welcome.vue'),
+    },{
+//  二级路由或者说是子路由。拼接上一个路由的路径。比如上一级是/main，这一级在它后面拼接/main/welcome
+        path: 'passenger',
+        component: () => import('../views/main/passenger.vue'),
     }]
    },
     {
+//  访问卖弄 ： 默认打开welcome页面
         path: '',
         redirect: '/welcome'
     }

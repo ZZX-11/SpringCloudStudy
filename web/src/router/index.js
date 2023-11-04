@@ -22,13 +22,12 @@ const routes = [
         path: 'welcome',
         component: () => import('../views/main/welcome.vue'),
     },{
-//  二级路由或者说是子路由。拼接上一个路由的路径。比如上一级是/main，这一级在它后面拼接/main/welcome
         path: 'passenger',
         component: () => import('../views/main/passenger.vue'),
     }]
    },
     {
-//  访问卖弄 ： 默认打开welcome页面
+//  访问定向 ： 默认打开welcome页面
         path: '',
         redirect: '/welcome'
     }

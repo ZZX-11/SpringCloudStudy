@@ -37,6 +37,7 @@ public class PassengerService {
 //       hutool的工具不需要先new对象
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
         if (ObjectUtil.isNull(passenger.getId())) {
+//          会员ID可以通过当前的token拿到
             passenger.setMemberId(LoginMemberContext.getId());
             passenger.setId(SnowUtil.getSnowflakeNextId());
             passenger.setCreateTime(now);

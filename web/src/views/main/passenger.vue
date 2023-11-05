@@ -43,6 +43,7 @@ export default defineComponent({
     });
 
     // 分页的三个属性名是固定的
+    // 点击就打开模态框
     const onAdd = () => {
       passenger.value = {};
       visible.value = true;

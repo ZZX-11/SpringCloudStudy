@@ -19,8 +19,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
 
-    //  当前登录用户的ID在很多个接口和文件都可能用到，所以写在common中拦截
+//      当前登录用户的ID在很多个接口和文件都可能用到，所以写在common中拦截
 //      拦截器的开启需要每个用户自己指定，所以config写在每个模块中。
+//      同时
     private static final Logger LOG = LoggerFactory.getLogger(MemberInterceptor.class);
 
     @Override

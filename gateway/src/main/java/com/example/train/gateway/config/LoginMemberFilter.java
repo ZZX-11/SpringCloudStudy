@@ -16,7 +16,13 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginMemberFilter.class);
 //  所有发送给后端的请求都要有token，且不能过期
-
+    public String removeTrailingBrace(String input) {
+        if (input.endsWith("}")) {
+            return input.substring(0, input.length() - 1);
+        } else {
+            return input;
+        }
+    }
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
@@ -26,7 +32,7 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
                 || path.contains("/hello")
                 || path.contains("/member/member/login")
                 || path.contains("/member/member/send-code")
-                ||path.contains("/member/member/register")) {
+                || path.contains("/member/member/register")) {
             LOG.info("不需要登录验证：{}", path);
             return chain.filter(exchange);
         } else {
@@ -34,6 +40,7 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         }
         // 获取header的token参数
         String token = exchange.getRequest().getHeaders().getFirst("token");
+        token = removeTrailingBrace(token);
         LOG.info("会员登录验证开始，token：{}", token);
         if (token == null || token.isEmpty()) {
             LOG.info( "token为空，请求被拦截" );
@@ -43,6 +50,7 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         }
 
         // 校验token是否有效，包括token是否被改过，是否过期
+        // 因为结尾带了}所以请求不能通过这里。passenger save
         boolean validate = JwtUtil.validate(token);
         if (validate) {
             LOG.info("token有效，放行该请求");

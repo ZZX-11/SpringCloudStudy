@@ -13,15 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/**
- * 拦截器：Spring框架特有的，常用于登录校验，权限校验，请求日志打印
- */
-@Component
-public class MemberInterceptor implements HandlerInterceptor {
-
 //      当前登录用户的ID在很多个接口和文件都可能用到，所以写在common中拦截
 //      拦截器的开启需要每个用户自己指定，所以config写在每个模块中。
 //      同时
+@Component
+public class MemberInterceptor implements HandlerInterceptor {
+
     private static final Logger LOG = LoggerFactory.getLogger(MemberInterceptor.class);
 
     @Override

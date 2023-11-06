@@ -25,6 +25,7 @@
       </template>
 
       <template v-else-if="column.dataIndex === 'type'">
+<!--        对这个列下的每一个元素，都进行下面的循环-->
         <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.code">
           <span v-if="item.code === record.type">
             {{item.desc}}
@@ -156,6 +157,7 @@ export default defineComponent({
     };
 
     const handleTableChange = (pagination) => {
+      // 当切换不同页面时，执行这个操作
       // console.log("看看自带的分页参数都有啥：" + pagination);
       handleQuery({
         page: pagination.current,

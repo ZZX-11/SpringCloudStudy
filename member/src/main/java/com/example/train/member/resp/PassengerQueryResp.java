@@ -11,6 +11,9 @@ public class PassengerQueryResp {
     /**
      * id
      */
+//  这里的 @JsonSerialize 是用于解决雪花算法导致的前端long类型精度丢失的问题。
+//  java中long数据能表示的范围比js中number大，在跟前端交互时，这样也就意味着部分数值在js中存不下(变成不准确的值)。
+//  使用fastjson的ToStringSerializer注解，让系统序列化时，保留相关精度。
     @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 

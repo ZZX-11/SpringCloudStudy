@@ -13,6 +13,7 @@
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
         <a-space>
+        <!--popconfirm 给出一个弹出框来提示用户-->
           <a-popconfirm
               title="删除后不可恢复，确认删除?"
               @confirm="onDelete(record)"
@@ -57,7 +58,6 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
-
 export default defineComponent({
 
   name: "passenger-view",
@@ -65,6 +65,7 @@ export default defineComponent({
     let loading = ref(false);
     const passengers = ref([]);
     const visible = ref(false);
+    const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
 
     // 分页的三个属性名是固定的
     const pagination = ref({
@@ -117,7 +118,8 @@ export default defineComponent({
     };
 
     const onEdit = (record) => {
-      passenger.value = window.Tool.copy(record);
+      passenger.value = window.Tool.copy(record)
+      // 控制模态框的打开与关闭
       visible.value = true;
     };
     // 根据数据库的主键删除
@@ -136,7 +138,7 @@ export default defineComponent({
       });
     };
 
-    // 新增乘客
+    // 新增乘客 编辑乘客 都是这里
     const handleOk = () => {
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
@@ -161,6 +163,7 @@ export default defineComponent({
       });
     };
 
+// 更新passengers，用于展示数据，更新页面参数
     const handleQuery = (param) => {
       if (!param) {
         param = {
@@ -196,7 +199,7 @@ export default defineComponent({
       });
     });
     return {
-      // PASSENGER_TYPE_ARRAY,
+      PASSENGER_TYPE_ARRAY,
       passengers,
       passenger,
       visible,

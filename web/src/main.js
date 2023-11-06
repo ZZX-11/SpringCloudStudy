@@ -6,7 +6,7 @@ import Antd, {notification} from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as Icons from "@ant-design/icons-vue";
 import axios from "axios";
-
+import './assets/js/enums';
 // createApp(App).use(Antd).use(store).use(router).mount('#app')
 // app页面用于和Index下的app标签关联起来
 const app = createApp(App);

@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ServerGenerator {
-    static boolean readOnly = true;
+    static boolean readOnly = false;
     static String vuePath = "admin/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/example/train/[module]/";
     static String pomPath = "generator/pom.xml";
@@ -91,7 +91,7 @@ public class ServerGenerator {
         param.put("fieldList", fieldList);
         param.put("typeSet", typeSet);
         param.put("readOnly", readOnly);
-//        System.out.println("组装参数：" + param);
+        System.out.println("组装参数：" + param);
 
         gen(Domain, param, "service", "service");
         gen(Domain, param, "controller/admin", "adminController");

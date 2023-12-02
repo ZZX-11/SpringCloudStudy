@@ -43,7 +43,7 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         token = removeTrailingBrace(token);
         LOG.info("会员登录验证开始，token：{}", token);
         if (token == null || token.isEmpty()) {
-            LOG.info( "token为空，请求被拦截" );
+            LOG.info( "token为空，请求被拦截 401状态码" );
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 //          返回是401，无权限
             return exchange.getResponse().setComplete();
@@ -56,7 +56,7 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
             LOG.info("token有效，放行该请求");
             return chain.filter(exchange);
         } else {
-            LOG.warn( "token无效，请求被拦截" );
+            LOG.warn( "token无效，请求被拦截 401状态码" );
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }

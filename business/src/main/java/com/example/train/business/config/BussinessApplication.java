@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
 @SpringBootApplication
 @ComponentScan("com.example")
 // 不同模块连接不同数据库--所以配置文件应该不同才行，不能放在common
-//@MapperScan("com.example.train.business.mapper")
+@MapperScan("com.example.train.business.mapper")
 public class BussinessApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(BussinessApplication.class);

@@ -103,8 +103,8 @@ public class ServerGenerator {
 
     private static void gen(String Domain, Map<String, Object> param, String packageName, String target) throws IOException, TemplateException {
         FreemarkerUtil.initConfig(target + ".ftl");
-//        String toPath = serverPath + packageName + "/";
-        String toPath = "D:\\javaProject\\train\\generator\\src\\main\\java\\com\\example\\train\\generator\\test\\";
+        String toPath = serverPath + packageName + "/";
+//        String toPath = "D:\\javaProject\\train\\generator\\src\\main\\java\\com\\example\\train\\generator\\test\\";
         new File(toPath).mkdirs();
         String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
         String fileName = toPath + Domain + Target + ".java";

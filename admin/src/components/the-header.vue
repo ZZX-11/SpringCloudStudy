@@ -1,9 +1,14 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo"/>
+
+    <div class="logo">
+      <router-link to="/welcome" style="color: white; font-size: 18px">
+        zzx控台
+      </router-link>
+    </div>
 
     <div style="float: right; color: white;">
-      您好：{{member.mobile}}
+     欢迎使用管理控制台
     </div>
     <a-menu
         v-model:selectedKeys="selectedKeys"
@@ -17,17 +22,17 @@
         </router-link>
       </a-menu-item>
 
-      <a-menu-item key="/passenger">
-        <router-link to="/passenger">
-          <user-outlined /> &nbsp; 乘车人管理
+      <a-menu-item key="/about">
+        <router-link to="/about">
+          <user-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
 
-      <a-menu-item key="/ticket">
-        <router-link to="/ticket">
-          <user-outlined /> &nbsp; 余票查询
-        </router-link>
-      </a-menu-item>
+<!--      <a-menu-item key="/ticket">-->
+<!--        <router-link to="/ticket">-->
+<!--          <user-outlined /> &nbsp; 余票查询-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
     </a-menu>
 
   </a-layout-header>
@@ -42,7 +47,6 @@ export default defineComponent({
   name: "the-header-view",
   //给组件命名.该组件可以在别的地方通过<the-header-view></the-header-view> 这样的方式使用
   setup() {
-    let member = store.state.member
     const selectedKeys = ref([]);
     //  header部分监控；路由路径的改变，当发生改变时更改所选中的值。
     watch(() => router.currentRoute.value.path, (newValue) => {
@@ -55,7 +59,6 @@ export default defineComponent({
     // 另外，通过在watch函数的选项参数中设置immediate: true，可以使回调函数在初始化时立即执行一次，以处理初始状态的路径值。
     return {
       selectedKeys,
-      member
     };
   },
 });
@@ -76,5 +79,13 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.logo {
+  float: left;
+  height: 31px;
+  width: 150px;
+  color: white;
+  font-size: 20px;
 }
 </style>

@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import Antd, {notification} from 'ant-design-vue';
+import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as Icons from "@ant-design/icons-vue";
 import axios from "axios";
@@ -27,12 +27,12 @@ for(const i in icons){
  */
 axios.interceptors.request.use(function (config) {
     console.log('请求参数：', config);
-    const _token = store.state.member.token;
-    // 对于所有的前端请求，在请求时给header送入token
-    if (_token) {
-        config.headers.token = _token;
-        console.log("请求headers增加token:", _token);
-    }
+    // const _token = store.state.member.token;
+    // // 对于所有的前端请求，在请求时给header送入token
+    // if (_token) {
+    //     config.headers.token = _token;
+    //     console.log("请求headers增加token:", _token);
+    // }
     return config;
 }, error => {
     return Promise.reject(error);
@@ -43,7 +43,6 @@ axios.interceptors.response.use(function (response) {
     return response;
 }, error => {
     console.log('返回错误：', error);
-    const response = error.response;
     return Promise.reject(error);
 });
 // 配置axios的baseURL

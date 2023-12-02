@@ -10,16 +10,16 @@
           <coffee-outlined /> &nbsp; 欢迎
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/passenger">
-        <router-link to="/passenger">
-          <user-outlined /> &nbsp; 乘车人管理
+      <a-menu-item key="/about">
+        <router-link to="/about">
+          <user-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/ticket">
-        <router-link to="/ticket">
-          <user-outlined /> &nbsp; 余票查询
-        </router-link>
-      </a-menu-item>
+<!--      <a-menu-item key="/ticket">-->
+<!--        <router-link to="/ticket">-->
+<!--          <user-outlined /> &nbsp; 余票查询-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
     </a-menu>
   </a-layout-sider>
 </template>

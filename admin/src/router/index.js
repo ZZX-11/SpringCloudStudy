@@ -33,6 +33,12 @@ const routes = [
     },{
         path: 'train-station',
         component: () => import('../views/main/business/train-station.vue'),
+    },{
+        path: 'train-carriage',
+        component: () => import('../views/main/business/train-carriage.vue'),
+    },{
+        path: 'train-seat',
+        component: () => import('../views/main/business/train-seat.vue'),
     }]
    },
     {

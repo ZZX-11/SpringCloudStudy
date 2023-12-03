@@ -27,19 +27,9 @@
   <a-modal v-model:visible="visible" title="火车车站" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form :model="trainStation" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
-<!--      <a-form-item label="车次编号">-->
-<!--        <a-input v-model:value="trainStation.trainCode" />-->
-<!--      </a-form-item>-->
       <a-form-item label="车次编号">
-        <a-select v-model:value="trainStation.trainCode" show-search
-                  :filterOption="filterTrainCodeOption"
-                   placeholder="请选择车次">
-          <a-select-option v-for="item in trains" :key="item.code" :value="item.code" :label="item.code + item.start + item.end">
-            {{item.code}} {{item.start}} ~ {{item.end}}
-          </a-select-option>
-        </a-select>
-      <!--总而言之，这段代码通过循环遍历trains数组，为每个数组项生成一个a-select-option选项。选项的值是item.code，显示标签是item.code + item.start + item.end。-->
-      <!--value与label均是自定义值，用来传给filterTrainCodeOption做过滤，目的是不显示一些值-->
+    <!--选择下拉框抽取成组件-->
+        <train-select-view v-model="trainStation.trainCode" width="100%"></train-select-view>
       </a-form-item>
 
       <a-form-item label="站序">
@@ -72,9 +62,11 @@ import { defineComponent, ref, onMounted,watch } from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
 import {pinyin} from "pinyin-pro";
+import TrainSelectView from "@/components/train-select.vue";
 
 export default defineComponent({
   name: "train-station-view",
+  components: {TrainSelectView},
   setup() {
     const visible = ref(false);
     let trainStation = ref({
@@ -152,32 +144,6 @@ export default defineComponent({
         trainStation.value.namePinyin = "";
       }
     }, {immediate: true});
-
-    // 车次下拉框
-    const trains = ref([])
-
-    const queryTrainCode = () => {
-      axios.get("/business/admin/train/query-all").then((response) => {
-        let data = response.data;
-        if (data.success) {
-          // console.log(data.content)
-          trains.value = data.content;
-        } else {
-          notification.error({description: data.message});
-        }
-      });
-    };
-
-    /**
-     * 车次下拉框筛选
-     * T 保留 F 不显示
-     * 查看label中是否有input（value）的值
-     */
-    const filterTrainCodeOption = (input, option) => {
-      console.log("zzx")
-      console.log(input, option);
-      return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-    };
 
 
     const onAdd = () => {
@@ -262,7 +228,6 @@ export default defineComponent({
         page: 1,
         size: pagination.value.pageSize
       });
-      queryTrainCode()
     });
 
     return {
@@ -278,8 +243,6 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
-      filterTrainCodeOption,
-      trains
     };
   },
 });

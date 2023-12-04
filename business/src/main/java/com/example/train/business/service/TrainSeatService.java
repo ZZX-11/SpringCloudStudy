@@ -104,7 +104,7 @@ public class TrainSeatService {
 
             // 循环行数
             for (int row = 1; row <= rowCount; row++) {
-                // 循环列数
+                // 循环列数 = 该对应座位类型中枚举的个数
                 for (SeatColEnum seatColEnum : colEnumList) {
                     // 构造座位数据并保存数据库
                     TrainSeat trainSeat = new TrainSeat();

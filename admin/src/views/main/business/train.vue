@@ -41,7 +41,10 @@
            ok-text="确认" cancel-text="取消">
     <a-form :model="train" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
-        <a-input v-model:value="train.code" />
+      <!--编辑时，不能再改车次编号-->
+      <!--!!train.id 的作用是将 train.id 的值转换为布尔类型。如果 train.id 存在（非空），
+      则 !!train.id 的值为 true；如果 train.id 不存在（为空），则 !!train.id 的值为 false。-->
+        <a-input v-model:value="train.code" :disabled="!!train.id"/>
       </a-form-item>
       <a-form-item label="车次类型">
         <a-select v-model:value="train.type">

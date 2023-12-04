@@ -1,7 +1,8 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      <train-select-view v-model="params.trainCode" width="200px"></train-select-view>
+      <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
@@ -90,6 +91,9 @@ export default defineComponent({
       current: 1,
       pageSize: 10,
     });
+    let params = ref({
+      trainCode: null
+    });
     let loading = ref(false);
     const columns = [
     {
@@ -161,7 +165,8 @@ export default defineComponent({
           visible.value = false;
           handleQuery({
             page: pagination.value.current,
-            size: pagination.value.pageSize
+            size: pagination.value.pageSize,
+            trainCode: params.value.trainCode
           });
         } else {
           notification.error({description: data.message});
@@ -180,7 +185,8 @@ export default defineComponent({
       axios.get("/business/admin/train-carriage/query-list", {
         params: {
           page: param.page,
-          size: param.size
+          size: param.size,
+          trainCode: params.value.trainCode
         }
       }).then((response) => {
         loading.value = false;
@@ -225,7 +231,8 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
+      params
     };
   },
 });

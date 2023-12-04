@@ -52,6 +52,7 @@ public class TrainStationService {
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
+        LOG.info("车次：{}", req.getTrainCode());
         PageHelper.startPage(req.getPage(), req.getSize());
         List<TrainStation> trainStationList = trainStationMapper.selectByExample(trainStationExample);
 

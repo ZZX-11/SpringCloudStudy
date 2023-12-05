@@ -36,9 +36,14 @@ public class TrainStationService {
         TrainStation trainStation = BeanUtil.copyProperties(req, TrainStation.class);
         if (ObjectUtil.isNull(trainStation.getId())) {
             // 保存之前，先校验唯一键是否存在
-            TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex(), req.getName());
+            TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            TrainStation trainStationDB2 = selectByUnique2(req.getTrainCode(), req.getName());
             if (ObjectUtil.isNotEmpty(trainStationDB)) {
-                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR);
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR);
+            }else{
+                if (ObjectUtil.isNotEmpty(trainStationDB2)){
+                    throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR);
+                }
             }
 
             trainStation.setId(SnowUtil.getSnowflakeNextId());
@@ -50,11 +55,22 @@ public class TrainStationService {
             trainStationMapper.updateByPrimaryKey(trainStation);
         }
     }
-    private TrainStation selectByUnique(String trainCode, Integer index, String Name) {
+    private TrainStation selectByUnique(String trainCode, Integer index) {
         TrainStationExample trainStationExample = new TrainStationExample();
         trainStationExample.createCriteria()
                 .andTrainCodeEqualTo(trainCode)
-                .andIndexEqualTo(index)
+                .andIndexEqualTo(index);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+    private TrainStation selectByUnique2(String trainCode, String Name) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria()
+                .andTrainCodeEqualTo(trainCode)
                 .andNameEqualTo(Name);
         List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
         if (CollUtil.isNotEmpty(list)) {

@@ -1,8 +1,11 @@
 package com.example.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import com.example.train.common.exception.BusinessException;
+import com.example.train.common.exception.BusinessExceptionEnum;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.example.train.common.resp.PageResp;
@@ -32,6 +35,12 @@ public class TrainStationService {
         DateTime now = DateTime.now();
         TrainStation trainStation = BeanUtil.copyProperties(req, TrainStation.class);
         if (ObjectUtil.isNull(trainStation.getId())) {
+            // 保存之前，先校验唯一键是否存在
+            TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex(), req.getName());
+            if (ObjectUtil.isNotEmpty(trainStationDB)) {
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR);
+            }
+
             trainStation.setId(SnowUtil.getSnowflakeNextId());
             trainStation.setCreateTime(now);
             trainStation.setUpdateTime(now);
@@ -41,7 +50,19 @@ public class TrainStationService {
             trainStationMapper.updateByPrimaryKey(trainStation);
         }
     }
-
+    private TrainStation selectByUnique(String trainCode, Integer index, String Name) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria()
+                .andTrainCodeEqualTo(trainCode)
+                .andIndexEqualTo(index)
+                .andNameEqualTo(Name);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
     public PageResp<TrainStationQueryResp> queryList(TrainStationQueryReq req) {
         TrainStationExample trainStationExample = new TrainStationExample();
         trainStationExample.setOrderByClause("train_code asc, `index` asc");

@@ -38,6 +38,7 @@ public class TrainStationService {
             // 保存之前，先校验唯一键是否存在
             TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex());
             TrainStation trainStationDB2 = selectByUnique2(req.getTrainCode(), req.getName());
+//          同一列车不能有两个完全一样的站序和站名。
             if (ObjectUtil.isNotEmpty(trainStationDB)) {
                 throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR);
             }else{

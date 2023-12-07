@@ -1,0 +1,19 @@
+GET http://localhost:8000/batch/hello
+Accept: application/json
+
+###
+
+GET http://localhost:8001/member/hello
+Accept: application/json
+
+###
+
+GET http://localhost:8000/business/admin/confirm-order/query-list?page=1&size=10
+Accept: application/json
+
+###
+
+GET http://localhost:8000/business/admin/train/gen-seat/2
+Accept: application/json
+
+###

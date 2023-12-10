@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 //import com.jiawa.train.batch.feign.BusinessFeign;
 //import com.jiawa.train.common.resp.CommonResp;
+import com.example.train.batch.feign.BusinessFeign;
 import com.example.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
 import org.quartz.DisallowConcurrentExecution;
@@ -22,8 +23,8 @@ public class DailyTrainJob implements Job {
 
     private static final Logger LOG = LoggerFactory.getLogger(DailyTrainJob.class);
 
-//    @Resource
-//    BusinessFeign businessFeign;
+    @Resource
+    BusinessFeign businessFeign;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -33,7 +34,7 @@ public class DailyTrainJob implements Job {
         Date date = new Date();
         DateTime dateTime = DateUtil.offsetDay(date, 15);
         Date offsetDate = dateTime.toJdkDate();
-//        CommonResp<Object> commonResp = businessFeign.genDaily(offsetDate);
-//        LOG.info("生成15天后的车次数据结束，结果：{}", commonResp);
+        CommonResp<Object> commonResp = businessFeign.genDaily(offsetDate);
+        LOG.info("生成15天后的车次数据结束，结果：{}", commonResp);
     }
 }

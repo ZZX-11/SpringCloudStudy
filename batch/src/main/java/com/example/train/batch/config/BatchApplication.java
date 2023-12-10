@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
@@ -12,6 +13,8 @@ import org.springframework.core.env.Environment;
 @ComponentScan("com.example")
 // 不同模块连接不同数据库--所以配置文件应该不同才行，不能放在common
 @MapperScan("com.example.train.*.mapper")
+@EnableFeignClients("com.example.train.batch.feign")
+//这个包下的类全是feign
 public class BatchApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchApplication.class);

@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.example.train.business.domain.DailyTrain;
@@ -133,10 +134,12 @@ public class DailyTrainTicketService {
                 dailyTrainTicket.setStartPinyin(trainStationStart.getNamePinyin());
                 dailyTrainTicket.setStartTime(trainStationStart.getOutTime());
                 dailyTrainTicket.setStartIndex(trainStationStart.getIndex());
+
                 dailyTrainTicket.setEnd(trainStationEnd.getName());
                 dailyTrainTicket.setEndPinyin(trainStationEnd.getNamePinyin());
                 dailyTrainTicket.setEndTime(trainStationEnd.getInTime());
                 dailyTrainTicket.setEndIndex(trainStationEnd.getIndex());
+
                 int ydz = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.YDZ.getCode());
                 int edz = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.EDZ.getCode());
                 int rw = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.RW.getCode());
@@ -159,7 +162,7 @@ public class DailyTrainTicketService {
                 dailyTrainTicket.setYwPrice(ywPrice);
                 dailyTrainTicket.setCreateTime(now);
                 dailyTrainTicket.setUpdateTime(now);
-//                dailyTrainTicketMapper.insert(dailyTrainTicket);
+                dailyTrainTicketMapper.insert(dailyTrainTicket);
             }
         }
         LOG.info("生成日期【{}】车次【{}】的余票信息结束", DateUtil.formatDate(date), trainCode);

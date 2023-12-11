@@ -1,4 +1,4 @@
-package com.example.train.business.controller.admin;
+package com.example.train.business.controller.Daily;
 
 import com.example.train.common.context.LoginMemberContext;
 import com.example.train.common.resp.CommonResp;

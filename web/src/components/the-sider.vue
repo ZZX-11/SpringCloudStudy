@@ -20,6 +20,11 @@
           <user-outlined /> &nbsp; 余票查询
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/order">
+        <router-link to="/order">
+          <user-outlined /> &nbsp; 订单查询
+        </router-link>
+      </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>

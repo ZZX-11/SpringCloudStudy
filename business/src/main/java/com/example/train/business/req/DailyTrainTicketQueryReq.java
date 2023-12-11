@@ -1,13 +1,11 @@
 package com.example.train.business.req;
 
-//import com.jiawa.train.common.req.PageReq;
 import com.example.train.common.req.PageReq;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class DailyTrainTicketQueryReq extends PageReq {
-
     /**
      * 日期
      */
@@ -28,6 +26,13 @@ public class DailyTrainTicketQueryReq extends PageReq {
      * 到达站
      */
     private String end;
+
+    public DailyTrainTicketQueryReq(Date date, String trainCode, String start, String end) {
+        this.date = date;
+        this.trainCode = trainCode;
+        this.start = start;
+        this.end = end;
+    }
 
     public Date getDate() {
         return date;

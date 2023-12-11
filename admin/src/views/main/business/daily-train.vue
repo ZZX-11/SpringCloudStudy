@@ -42,7 +42,6 @@
       </a-form-item>
       <a-form-item label="车次编号">
         <train-select-view v-model="dailyTrain.code" @change="onChangeCode"></train-select-view>
-<!--        <a-input v-model:value="dailyTrain.code" />-->
       </a-form-item>
       <a-form-item label="车次类型">
         <a-select v-model:value="dailyTrain.type">
@@ -71,13 +70,22 @@
       </a-form-item>
     </a-form>
   </a-modal>
+  <a-modal v-model:visible="genDailyVisible" title="生成车次" @ok="handleGenDailyOk"
+           :confirm-loading="genDailyLoading" ok-text="确认" cancel-text="取消">
+    <a-form :model="genDaily" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+      <a-form-item label="日期">
+        <a-date-picker v-model:value="genDaily.date" placeholder="请选择日期"/>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
-import TrainSelectView from "@/components/train-select.vue";
+import TrainSelectView from "@/components/train-select";
+import dayjs from 'dayjs';
 
 export default defineComponent({
   name: "daily-train-view",
@@ -110,57 +118,61 @@ export default defineComponent({
     let params = ref({
       code: null
     });
-
+    const genDaily = ref({
+      date: null
+    });
+    const genDailyVisible = ref(false);
+    const genDailyLoading = ref(false);
     const columns = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: '车次编号',
-      dataIndex: 'code',
-      key: 'code',
-    },
-    {
-      title: '车次类型',
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: '始发站',
-      dataIndex: 'start',
-      key: 'start',
-    },
-    {
-      title: '始发站拼音',
-      dataIndex: 'startPinyin',
-      key: 'startPinyin',
-    },
-    {
-      title: '出发时间',
-      dataIndex: 'startTime',
-      key: 'startTime',
-    },
-    {
-      title: '终点站',
-      dataIndex: 'end',
-      key: 'end',
-    },
-    {
-      title: '终点站拼音',
-      dataIndex: 'endPinyin',
-      key: 'endPinyin',
-    },
-    {
-      title: '到站时间',
-      dataIndex: 'endTime',
-      key: 'endTime',
-    },
-    {
-      title: '操作',
-      dataIndex: 'operation'
-    }
+      {
+        title: '日期',
+        dataIndex: 'date',
+        key: 'date',
+      },
+      {
+        title: '车次编号',
+        dataIndex: 'code',
+        key: 'code',
+      },
+      {
+        title: '车次类型',
+        dataIndex: 'type',
+        key: 'type',
+      },
+      {
+        title: '始发站',
+        dataIndex: 'start',
+        key: 'start',
+      },
+      {
+        title: '始发站拼音',
+        dataIndex: 'startPinyin',
+        key: 'startPinyin',
+      },
+      {
+        title: '出发时间',
+        dataIndex: 'startTime',
+        key: 'startTime',
+      },
+      {
+        title: '终点站',
+        dataIndex: 'end',
+        key: 'end',
+      },
+      {
+        title: '终点站拼音',
+        dataIndex: 'endPinyin',
+        key: 'endPinyin',
+      },
+      {
+        title: '到站时间',
+        dataIndex: 'endTime',
+        key: 'endTime',
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation'
+      }
     ];
 
     const onAdd = () => {
@@ -233,23 +245,45 @@ export default defineComponent({
       });
     };
 
-    const handleTableChange = (page) => {
-      // console.log("看看自带的分页参数都有啥：" + JSON.stringify(page));
-      pagination.value.pageSize = page.pageSize;
+    const handleTableChange = (pagination) => {
+      // console.log("看看自带的分页参数都有啥：" + pagination);
       handleQuery({
-        page: page.current,
-        size: page.pageSize
+        page: pagination.current,
+        size: pagination.pageSize
       });
     };
-    // onChangeCode
+
     const onChangeCode = (train) => {
-      // console.log("看看自带的分页参数都有啥：" + JSON.stringify(page));
       console.log("车次下拉组件选择：", train);
+      // 直接赋值的话会赋值该ID的值，所以
       let t = Tool.copy(train);
-      // t 是通过深拷贝 train 而得到的对象。深拷贝创建了一个完全独立于原始对象的副本
+      console.log("车次下拉组件选择：", t);
       delete t.id;
       // 用assign可以合并
       dailyTrain.value = Object.assign(dailyTrain.value, t);
+    };
+
+    const onClickGenDaily = () => {
+      genDailyVisible.value = true;
+    };
+
+    const handleGenDailyOk = () => {
+      let date = dayjs(genDaily.value.date).format("YYYY-MM-DD");
+      genDailyLoading.value = true;
+      axios.get("/business/admin/daily-train/gen-daily/" + date).then((response) => {
+        genDailyLoading.value = false;
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "生成成功！"});
+          genDailyVisible.value = false;
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
     };
 
     onMounted(() => {
@@ -274,7 +308,12 @@ export default defineComponent({
       onEdit,
       onDelete,
       onChangeCode,
-      params
+      params,
+      genDaily,
+      genDailyVisible,
+      handleGenDailyOk,
+      onClickGenDaily,
+      genDailyLoading
     };
   },
 });

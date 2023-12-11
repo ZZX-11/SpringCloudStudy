@@ -159,7 +159,7 @@ public class DailyTrainTicketService {
                 dailyTrainTicket.setYwPrice(ywPrice);
                 dailyTrainTicket.setCreateTime(now);
                 dailyTrainTicket.setUpdateTime(now);
-                dailyTrainTicketMapper.insert(dailyTrainTicket);
+//                dailyTrainTicketMapper.insert(dailyTrainTicket);
             }
         }
         LOG.info("生成日期【{}】车次【{}】的余票信息结束", DateUtil.formatDate(date), trainCode);

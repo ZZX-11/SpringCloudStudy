@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from "@/store";
-import {notification} from "ant-design-vue";
 
 const routes = [{
     path: '/',
@@ -31,46 +29,46 @@ const routes = [{
         }]
     }, {
         path: 'business/',
-        children: [
-        //     {
-        //     path: 'confirm-order',
-        //     component: () => import('../views/main/business/confirm-order.vue'),
-        // },
-            {
+        children: [ {
+            path: 'confirm-order',
+            component: () => import('../views/main/business/confirm-order.vue'),
+        }, {
             path: 'daily-train',
             component: () => import('../views/main/business/daily-train.vue'),
         }, {
             path: 'daily-train-station',
             component: () => import('../views/main/business/daily-train-station.vue'),
-        }
-        , {
+        }, {
             path: 'daily-train-carriage',
             component: () => import('../views/main/business/daily-train-carriage.vue'),
-        }
-        , {
+        }, {
             path: 'daily-train-seat',
             component: () => import('../views/main/business/daily-train-seat.vue'),
-        }
-        , {
+        }, {
             path: 'daily-train-ticket',
             component: () => import('../views/main/business/daily-train-ticket.vue'),
-        }
-        ]
+        }]
     }, {
         path: 'batch/',
         children: [{
             path: 'job',
             component: () => import('../views/main/batch/job.vue')
         }]
+    }, {
+        path: 'member/',
+        children: [{
+            path: 'ticket',
+            component: () => import('../views/main/member/ticket.vue')
+        }]
     }]
 }, {
     path: '',
     redirect: '/welcome'
 }];
-// 配置了基本路由信息
+
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+    history: createWebHistory(process.env.BASE_URL),
+    routes
 })
 
 export default router

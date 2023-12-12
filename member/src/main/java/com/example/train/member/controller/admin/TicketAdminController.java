@@ -18,11 +18,11 @@ public class TicketAdminController {
     @Resource
     private TicketService ticketService;
 
-    @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody TicketSaveReq req) {
-        ticketService.save(req);
-        return new CommonResp<>();
-    }
+//    @PostMapping("/save")
+//    public CommonResp<Object> save(@Valid @RequestBody TicketSaveReq req) {
+//        ticketService.save(req);
+//        return new CommonResp<>();
+//    }
 
     @GetMapping("/query-list")
     public CommonResp<PageResp<TicketQueryResp>> queryList(@Valid TicketQueryReq req) {

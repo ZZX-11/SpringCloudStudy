@@ -8,20 +8,17 @@ import com.example.train.member.resp.TicketQueryResp;
 import com.example.train.member.service.TicketService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-;
+// my-ticket 页面
 
 @RestController
-@RequestMapping("/ticket")
 public class TicketController {
 
     @Autowired
     private TicketService ticketService;
 
-    @GetMapping("/query-list")
+    @GetMapping("/ticket/query-list")
     public CommonResp<PageResp<TicketQueryResp>> query(@Valid TicketQueryReq req) {
         CommonResp<PageResp<TicketQueryResp>> commonResp = new CommonResp<>();
         req.setMemberId(LoginMemberContext.getId());
@@ -30,4 +27,15 @@ public class TicketController {
         return commonResp;
     }
 
+    @GetMapping("/admin/ticket/query-list-A")
+    public CommonResp<PageResp<TicketQueryResp>> queryList(@Valid TicketQueryReq req) {
+        PageResp<TicketQueryResp> list = ticketService.queryList(req);
+        return new CommonResp<>(list);
+    }
+
+    @DeleteMapping("/admin/ticket/delete/{id}")
+    public CommonResp<Object> delete(@PathVariable Long id) {
+        ticketService.delete(id);
+        return new CommonResp<>();
+    }
 }

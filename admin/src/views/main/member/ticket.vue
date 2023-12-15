@@ -134,7 +134,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      axios.get("/member/admin/ticket/query-list", {
+      axios.get("/member/admin/ticket/query-list-A", {
         params: {
           page: param.page,
           size: param.size

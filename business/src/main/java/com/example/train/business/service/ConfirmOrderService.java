@@ -102,7 +102,7 @@ public class ConfirmOrderService {
          String trainCode = req.getTrainCode();
          String start = req.getStart();
          String end = req.getEnd();
-        List<ConfirmOrderTicketReq> tickets = req.getTickets();
+         List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
          ConfirmOrder confirmOrder = new ConfirmOrder();
          confirmOrder.setId(SnowUtil.getSnowflakeNextId());
@@ -120,7 +120,7 @@ public class ConfirmOrderService {
          confirmOrder.setTickets(JSON.toJSONString(tickets));
          confirmOrderMapper.insert(confirmOrder);
 //      查出余票记录，需要得到真实的库存
-        DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
+        DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(req);
         LOG.info("查出余票记录：{}", dailyTrainTicket);
 //      预扣减余票数量，并判断余票是否足够
         reduceTickets(req, dailyTrainTicket);
@@ -197,7 +197,25 @@ public class ConfirmOrderService {
             LOG.error("保存购票信息失败", e);
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
+    }
 
+    private ConfirmOrder getAndInsertConfirmOrder(ConfirmOrderDoReq req, DateTime now, Date date, String trainCode, String start, String end, List<ConfirmOrderTicketReq> tickets) {
+        ConfirmOrder confirmOrder = new ConfirmOrder();
+        confirmOrder.setId(SnowUtil.getSnowflakeNextId());
+        confirmOrder.setCreateTime(now);
+        confirmOrder.setUpdateTime(now);
+        confirmOrder.setMemberId(req.getMemberId());
+
+        confirmOrder.setDate(date);
+        confirmOrder.setTrainCode(trainCode);
+        confirmOrder.setStart(start);
+        confirmOrder.setEnd(end);
+
+        confirmOrder.setDailyTrainTicketId(req.getDailyTrainTicketId());
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
+        confirmOrder.setTickets(JSON.toJSONString(tickets));
+        confirmOrderMapper.insert(confirmOrder);
+        return confirmOrder;
     }
 
     private static void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
@@ -332,8 +350,6 @@ public class ConfirmOrderService {
                 return;
             }
         }
-
-
     }
 
     private boolean calSell(DailyTrainSeat dailyTrainSeat, Integer startIndex, Integer endIndex) {

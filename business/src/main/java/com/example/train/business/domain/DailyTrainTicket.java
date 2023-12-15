@@ -45,6 +45,38 @@ public class DailyTrainTicket {
     private Date createTime;
 
     private Date updateTime;
+    public DailyTrainTicket() {
+    }
+
+    public DailyTrainTicket(Long id, Date date, String trainCode, String start, String startPinyin, Date startTime, Integer startIndex, String end, String endPinyin, Date endTime, Integer endIndex, Integer ydz, BigDecimal ydzPrice, Integer edz, BigDecimal edzPrice, Integer rw, BigDecimal rwPrice, Integer yw, BigDecimal ywPrice, Date createTime, Date updateTime) {
+        this.id = id;
+        this.date = date;
+        this.trainCode = trainCode;
+
+        this.start = start;
+        this.startPinyin = startPinyin;
+        this.startTime = startTime;
+        this.startIndex = startIndex;
+
+        this.end = end;
+        this.endPinyin = endPinyin;
+        this.endTime = endTime;
+        this.endIndex = endIndex;
+
+        this.ydz = ydz;
+        this.ydzPrice = ydzPrice;
+        this.edz = edz;
+        this.edzPrice = edzPrice;
+        this.rw = rw;
+        this.rwPrice = rwPrice;
+        this.yw = yw;
+        this.ywPrice = ywPrice;
+
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
+
 
     public Long getId() {
         return id;

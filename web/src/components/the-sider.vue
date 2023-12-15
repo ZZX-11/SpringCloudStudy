@@ -20,11 +20,11 @@
           <user-outlined /> &nbsp; 余票查询
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/order">
-        <router-link to="/order">
-          <user-outlined /> &nbsp; 订单查询
-        </router-link>
-      </a-menu-item>
+<!--      <a-menu-item key="/order">-->
+<!--        <router-link to="/order">-->
+<!--          <user-outlined /> &nbsp; 订单查询-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
       <a-menu-item key="/my-ticket">
         <router-link to="/my-ticket">
           <idcard-outlined /> &nbsp; 我的车票
@@ -58,6 +58,7 @@ export default defineComponent({
     };
   },
 });
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

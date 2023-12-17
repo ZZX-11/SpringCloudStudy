@@ -14,6 +14,8 @@ import com.example.train.business.req.ConfirmOrderTicketReq;
 //import com.example.train.common.req.MemberTicketReq;
 import com.example.train.common.req.MemberTicketReq;
 import com.example.train.common.resp.CommonResp;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +53,10 @@ public class AfterConfirmOrderService {
      *  为会员增加购票记录
      *  更新确认订单为成功
      */
-     @Transactional
-//     @GlobalTransactional
+//     @Transactional
+     @GlobalTransactional
     public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) throws Exception {
-        // LOG.info("seata全局事务ID: {}", RootContext.getXID());
+        LOG.info("seata全局事务ID: {}", RootContext.getXID());
         for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat dailyTrainSeat = finalSeatList.get(j);
 //          更新每日座位表
@@ -68,7 +70,11 @@ public class AfterConfirmOrderService {
 //          更新订单状态为成功
             String Status = ConfirmOrderStatusEnum.SUCCESS.getCode();
             updateConfirmOrderStatus(confirmOrder,Status);
+            Thread.sleep(10000);
         }
+        LOG.info("成功！！！");
+
+//         throw new Exception("严重异常");
     }
     private void updateConfirmOrderStatus(ConfirmOrder confirmOrder,String Status) {
         ConfirmOrder confirmOrderForUpdate = new ConfirmOrder();

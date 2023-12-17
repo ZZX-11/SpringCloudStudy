@@ -24,6 +24,7 @@ import com.example.train.common.resp.PageResp;
 import com.example.train.common.util.SnowUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class ConfirmOrderService1 {
 
 
     @Transactional
-    public void doConfirm(ConfirmOrderDoReq req) throws Exception {
+    public void doConfirm(ConfirmOrderDoReq req) {
 //      省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已买过
 //      保存确认订单表，状态初始
          DateTime now = DateTime.now();
@@ -83,9 +84,13 @@ public class ConfirmOrderService1 {
 //          随机挑两个座位即可
             List<DailyTrainSeat> dailyTrainSeats = selectForNoneChoose(req, passengerTickets, seatTypeCode, dailyTrainTicket);
             LOG.info("选中座位:{}", dailyTrainSeats);
-            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,dailyTrainSeats,passengerTickets,confirmOrder);
+            try {
+                afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,dailyTrainSeats,passengerTickets,confirmOrder);
+            } catch (Exception e) {
+                LOG.error("保存购票信息失败", e);
+                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
+            }
         }
-
     }
 
     private ConfirmOrder getAndInsertConfirmOrder(ConfirmOrderDoReq req, DateTime now, List<ConfirmOrderTicketReq> tickets) {
@@ -161,9 +166,9 @@ public class ConfirmOrderService1 {
         List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode,seatType);
 //      根据seat 和seat type判断 seat_index 应该余多少
 //      因为可选座位仅能在两排的范围内选，所以 先看第一
-        for(String seat:seatList){
-//            if (seat)
-        }
+//        for(String seat:seatList){
+////            if (seat)
+//        }
 
         return getSeatList;
     }

@@ -14,6 +14,6 @@ public class TestController {
     public String hello() {
         String hello = businessFeign.hello();
         System.out.println(hello);
-        return "Hello World! batch";
+        return "Hello World! batch"+hello;
     }
 }

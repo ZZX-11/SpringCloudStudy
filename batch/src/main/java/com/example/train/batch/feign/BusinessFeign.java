@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Date;
 // 客户端 调用business
-@FeignClient(name = "business", url = "http://127.0.0.1:8002/business")
+//@FeignClient(name = "business", url = "http://127.0.0.1:8002/business")
+@FeignClient(value = "business")
 public interface BusinessFeign {
-
-    @GetMapping("/hello")
+//  nacos 的name business 仅能确定到ip：port，并不能到/business
+    @GetMapping("/business/hello")
     String hello();
 
-    @GetMapping("/admin/daily-train/gen-daily/{date}")
+    @GetMapping("/business/admin/daily-train/gen-daily/{date}")
     CommonResp<Object> genDaily(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date);
 }

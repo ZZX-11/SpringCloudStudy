@@ -18,9 +18,9 @@ public class ServerGenerator {
     static String serverPath = "[module]/src/main/java/com/example/train/[module]/";
     static String pomPath = "generator/pom.xml";
     static String module = "";
-    static {
-        new File(serverPath).mkdirs();
-    }
+//    static {
+//        new File(serverPath).mkdirs();
+//    }
 
     public static void main(String[] args) throws Exception {
         // 通过都pom，找到要操作的数据库的名字，以及相应生成器配置文件的路径。

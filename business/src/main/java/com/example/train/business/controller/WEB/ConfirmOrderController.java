@@ -21,6 +21,7 @@ public class ConfirmOrderController {
 
     @PostMapping("/do")
     public CommonResp<Object> doConfirm(@Valid @RequestBody ConfirmOrderDoReq req) throws Exception {
+//        System.out.println(req);
         Long id = LoginMemberContext.getId();
         req.setMemberId(id);
         confirmOrderService1.doConfirm(req);

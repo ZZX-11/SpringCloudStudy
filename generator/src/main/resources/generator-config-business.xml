@@ -52,6 +52,7 @@
 <!--        <table tableName="daily_train_seat" domainObjectName="DailyTrainSeat"/>-->
 <!--        <table tableName="daily_train_ticket" domainObjectName="DailyTrainTicket"/>-->
 <!--        结束-->
-        <table tableName="confirm_order" domainObjectName="ConfirmOrder"/>
+<!--        <table tableName="confirm_order" domainObjectName="ConfirmOrder"/>-->
+        <table tableName="sk_token" domainObjectName="SkToken"/>
     </context>
 </generatorConfiguration>

@@ -10,6 +10,7 @@ import com.example.train.business.mapper.ConfirmOrderMapper;
 import com.example.train.business.mapper.DailyTrainSeatMapper;
 //import com.example.train.business.mapper.cust.DailyTrainTicketMapperCust;
 import com.example.train.business.mapper.DailyTrainTicketMapper;
+import com.example.train.business.mapper.cust.DailyTrainTicketMapperCust;
 import com.example.train.business.req.ConfirmOrderTicketReq;
 //import com.example.train.common.req.MemberTicketReq;
 import com.example.train.common.req.MemberTicketReq;
@@ -37,10 +38,9 @@ public class AfterConfirmOrderService {
     @Resource
     private DailyTrainTicketMapper dailyTrainTicketMapper;
 
+    @Resource
+    private DailyTrainTicketMapperCust dailyTrainTicketMapperCust;
 
-    //    @Resource
-//    private DailyTrainTicketMapperCust dailyTrainTicketMapperCust;
-//
     @Resource
     private MemberFeign memberFeign;
 
@@ -71,7 +71,14 @@ public class AfterConfirmOrderService {
 //          更新订单状态为成功
             String Status = ConfirmOrderStatusEnum.SUCCESS.getCode();
             updateConfirmOrderStatus(confirmOrder,Status);
-            Thread.sleep(10000);
+//          更新每日票数
+            dailyTrainTicketMapperCust.updateCountBySell(
+                    dailyTrainSeat.getDate(),
+                    dailyTrainSeat.getTrainCode(),
+                    dailyTrainSeat.getSeatType(),
+                    dailyTrainTicket.getStartIndex(),
+                    dailyTrainTicket.getEndIndex());
+//            Thread.sleep(10000);
         }
         LOG.info("成功！！！");
 

@@ -110,6 +110,7 @@ public class DailyTrainService {
 
     @Transactional
     public void genDailyTrain(Date date, Train train) {
+        System.out.println("zzx");
         LOG.info("生成日期【{}】车次【{}】的信息开始", DateUtil.formatDate(date), train.getCode());
         // 删除该车次已有的数据
         DailyTrainExample dailyTrainExample = new DailyTrainExample();

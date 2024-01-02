@@ -22,6 +22,7 @@ import com.example.train.business.req.ConfirmOrderQueryReq;
 import com.example.train.business.req.ConfirmOrderSaveReq;
 import com.example.train.business.req.ConfirmOrderTicketReq;
 import com.example.train.business.resp.ConfirmOrderQueryResp;
+import com.example.train.common.context.LoginMemberContext;
 import com.example.train.common.exception.BusinessException;
 import com.example.train.common.exception.BusinessExceptionEnum;
 import com.example.train.common.resp.PageResp;
@@ -68,6 +69,8 @@ public class ConfirmOrderService1 {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private SkTokenService skTokenService;
 //    @Autowired
 //    private RedissonClient redissonClient;
     @Transactional
@@ -75,6 +78,18 @@ public class ConfirmOrderService1 {
     public void doConfirm(ConfirmOrderDoReq req) {
 //      省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已买过
 //      保存确认订单表，状态初始
+
+//      校验令牌余量 令牌大闸
+//      令牌大闸有两个作用，1.帮我们提前校验库存。2.防机器人刷票   LoginMemberContext.getId()  一个人一段时间只能拿一次令牌
+        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+        if (validSkToken) {
+            LOG.info("令牌校验通过");
+        } else {
+            LOG.info("令牌校验不通过");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
+        }
+
+
 //      分布式锁
         String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
 //      setIfAbsent就是对应redis的setnx

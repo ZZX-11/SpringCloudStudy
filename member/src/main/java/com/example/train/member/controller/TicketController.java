@@ -17,7 +17,7 @@ public class TicketController {
 
     @Autowired
     private TicketService ticketService;
-
+//  某个人的会员车票
     @GetMapping("/ticket/query-list")
     public CommonResp<PageResp<TicketQueryResp>> query(@Valid TicketQueryReq req) {
         CommonResp<PageResp<TicketQueryResp>> commonResp = new CommonResp<>();
@@ -27,6 +27,7 @@ public class TicketController {
         return commonResp;
     }
 
+//    全部的会员车票
     @GetMapping("/admin/ticket/query-list-A")
     public CommonResp<PageResp<TicketQueryResp>> queryList(@Valid TicketQueryReq req) {
         PageResp<TicketQueryResp> list = ticketService.queryList(req);

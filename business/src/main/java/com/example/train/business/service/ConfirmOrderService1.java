@@ -71,6 +71,7 @@ public class ConfirmOrderService1 {
 
     @Autowired
     private SkTokenService skTokenService;
+
 //    @Autowired
 //    private RedissonClient redissonClient;
     @Transactional

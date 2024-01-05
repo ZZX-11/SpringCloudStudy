@@ -82,13 +82,13 @@ public class ConfirmOrderService1 {
 
 //      校验令牌余量 令牌大闸
 //      令牌大闸有两个作用，1.帮我们提前校验库存。2.防机器人刷票   LoginMemberContext.getId()  一个人一段时间只能拿一次令牌
-        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
-        if (validSkToken) {
-            LOG.info("令牌校验通过");
-        } else {
-            LOG.info("令牌校验不通过");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
-        }
+//        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+//        if (validSkToken) {
+//            LOG.info("令牌校验通过");
+//        } else {
+//            LOG.info("令牌校验不通过");
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
+//        }
 
 
 //      分布式锁
@@ -133,14 +133,13 @@ public class ConfirmOrderService1 {
 //             LOG.info("很遗憾，没抢到锁");
 //             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
 //        }
-
         try {
             DateTime now = DateTime.now();
 
             List<ConfirmOrderTicketReq> passengerTickets = req.getTickets();
 
             ConfirmOrder confirmOrder = getAndInsertConfirmOrder(req, now, passengerTickets);
-//      查出余票记录，需要得到真实的库存
+//          查出余票记录，需要得到真实的库存
             DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(req);
             if (dailyTrainTicket == null) {
 //           所选车次已经卖完
@@ -148,6 +147,9 @@ public class ConfirmOrderService1 {
             } else {
                 LOG.info("查出余票记录：{}", dailyTrainTicket);
             }
+
+//          余票预扣减
+            reduceTickets(req,dailyTrainTicket);
 //     每一次选座 仅支持同一种座位类型
             ConfirmOrderTicketReq ticketReq0 = passengerTickets.get(0);
             String seatTypeCode = ticketReq0.getSeatTypeCode();
@@ -155,7 +157,7 @@ public class ConfirmOrderService1 {
                 LOG.info("有选座！！");
             } else {
                 LOG.info("无选座！！");
-//          随机挑两个座位即可
+//              随机挑几个座位即可
                 List<DailyTrainSeat> dailyTrainSeats = selectForNoneChoose(req, passengerTickets, seatTypeCode, dailyTrainTicket);
                 LOG.info("选中座位:{}", dailyTrainSeats);
                 try {
@@ -275,4 +277,43 @@ public class ConfirmOrderService1 {
         str1 = getSubstring(str, start, end).replaceAll(".","1");
         return str2+str1+str3;
     }
+
+    private static void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
+        int Ticket_nums = req.getTickets().size();
+//        for (ConfirmOrderTicketReq ticketReq : req.getTickets()) {
+        String seatTypeCode = req.getTickets().get(0).getSeatTypeCode();
+        SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
+        switch (seatTypeEnum) {
+            case YDZ -> {
+                int countLeft = dailyTrainTicket.getYdz() - Ticket_nums;
+                if (countLeft < 0) {
+                    throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR);
+                }
+                dailyTrainTicket.setYdz(countLeft);
+            }
+            case EDZ -> {
+                int countLeft = dailyTrainTicket.getEdz() - Ticket_nums;
+                if (countLeft < 0) {
+                    throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR);
+                }
+                dailyTrainTicket.setEdz(countLeft);
+            }
+            case RW -> {
+                int countLeft = dailyTrainTicket.getRw() - Ticket_nums;
+                if (countLeft < 0) {
+                    throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR);
+                }
+                dailyTrainTicket.setRw(countLeft);
+            }
+            case YW -> {
+                int countLeft = dailyTrainTicket.getYw() - Ticket_nums;
+                if (countLeft < 0) {
+                    throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR);
+                }
+                dailyTrainTicket.setYw(countLeft);
+            }
+        }
+//        }
+    }
+
 }

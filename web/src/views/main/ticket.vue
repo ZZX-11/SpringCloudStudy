@@ -164,16 +164,12 @@ export default defineComponent({
 
 
     const handleQuery = (param) => {
-      if (Tool.isEmpty(params.value.date)) {
-        notification.error({description: "请输入日期"});
-        return;
-      }
-      if (Tool.isEmpty(params.value.start)) {
-        notification.error({description: "请输入出发地"});
-        return;
-      }
-      if (Tool.isEmpty(params.value.end)) {
-        notification.error({description: "请输入目的地"});
+      // if (Tool.isEmpty(params.value.date)) {
+      //   notification.error({description: "请输入日期"});
+      //   return;
+      // }
+      if (! Tool.isEmpty(params.value.start) || ! Tool.isEmpty(params.value.end)) {
+        notification.error({description: "请输入出发地与目的地"});
         return;
       }
       if (!param) {

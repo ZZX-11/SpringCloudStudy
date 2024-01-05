@@ -159,7 +159,7 @@ export default defineComponent({
       console.log("勾选乘客发生变化", newVal, oldVal)
       // 每次有变化时，把购票列表清空，重新构造列表
       tickets.value = [];
-      passengerChecks.value.forEach((item) => tickets.value.push({
+        passengerChecks.value.forEach((item) => tickets.value.push({
         passengerId: item.id,
         passengerType: item.type,
         seatTypeCode: seatTypes[0].code,

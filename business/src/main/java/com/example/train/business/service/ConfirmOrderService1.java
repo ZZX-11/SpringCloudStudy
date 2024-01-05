@@ -40,9 +40,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -155,6 +153,9 @@ public class ConfirmOrderService1 {
             String seatTypeCode = ticketReq0.getSeatTypeCode();
             if (StrUtil.isNotBlank(ticketReq0.getSeat())) {
                 LOG.info("有选座！！");
+                List<DailyTrainSeat> dailyTrainSeats = selectForChoose(req, seatTypeCode, dailyTrainTicket);
+                LOG.info("选中座位:{}", dailyTrainSeats);
+                
             } else {
                 LOG.info("无选座！！");
 //              随机挑几个座位即可
@@ -238,22 +239,93 @@ public class ConfirmOrderService1 {
 
         return getSeatList;
     }
+    private HashMap<Integer, List<DailyTrainSeat>> handleRows(List<DailyTrainSeat> dailyTrainSeats) {
+        HashMap<Integer, List<DailyTrainSeat>> trainMAP = new HashMap<>();
 
-    private List<DailyTrainSeat> selectForChoose(ConfirmOrderDoReq req, ConfirmOrderTicketReq PassengerTicket, String seatType, DailyTrainTicket dailyTrainTicket){
-//      随机选中合适的位置
-//      对于所有车厢的所有座位
+        for (DailyTrainSeat seat : dailyTrainSeats) {
+            int row = Integer.parseInt(seat.getRow()); // 假设row是DailyTrainSeat对象中的属性
+
+            // 根据row将DailyTrainSeat对象放入trainMAP对应的列表中
+            if (!trainMAP.containsKey(row)) {
+                trainMAP.put(row, new ArrayList<>());
+            }
+            trainMAP.get(row).add(seat);
+        }
+        return trainMAP;
+        // trainMAP 中包含了按照 row 分组的 DailyTrainSeat 对象列表
+    }
+
+
+    private List<DailyTrainSeat> selectForChoose(ConfirmOrderDoReq req, String seatType, DailyTrainTicket dailyTrainTicket){
+
         List<DailyTrainSeat> getSeatList = new ArrayList<>();
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         List<String> seatList = req.getTickets().stream()
                 .map(ticket -> ticket.getSeat())
                 .collect(Collectors.toList());
+
+        List<String> seatList1 = seatList.stream()
+                .filter(seat -> seat.contains("1"))
+                .map(seat -> seat.substring(0, 1)) // 仅保留第一个字符
+                .collect(Collectors.toList());
+
+        List<String> seatList2 = seatList.stream()
+                .filter(seat -> seat.contains("2"))
+                .map(seat -> seat.substring(0, 1)) // 仅保留第一个字符
+                .collect(Collectors.toList());
+
+//      得到全部的车厢
         List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode,seatType);
-//      根据seat 和seat type判断 seat_index 应该余多少
-//      因为可选座位仅能在两排的范围内选，所以 先看第一
-//        for(String seat:seatList){
-////            if (seat)
-//        }
+
+        int size1 = seatList1.size();
+        int size2 = seatList1.size();
+        int BigLoop = 0;
+        for (DailyTrainCarriage dailyTrainCarriage : carriageList) {
+
+            if (BigLoop==1){
+                break;
+            }
+//          得到全部的座位
+            List<DailyTrainSeat> dailyTrainSeats = dailyTrainSeatService.selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
+            HashMap<Integer, List<DailyTrainSeat>> rowMap = handleRows(dailyTrainSeats);
+ //         对同一行
+            for (Map.Entry<Integer, List<DailyTrainSeat>> entry : rowMap.entrySet()) {
+
+                Integer row = entry.getKey();
+                int flag = 0;
+//              这一行的车座信息
+                List<DailyTrainSeat> seats = entry.getValue();
+                List<DailyTrainSeat> selectList = new ArrayList<>();
+ //             遍历每一行对应的 DailyTrainSeat 对象列表
+                for (String CustomerChoose: seatList1){
+                    for (DailyTrainSeat seat : seats) {
+                        String sell = seat.getSell();
+                        String sellPart = getSubstring(sell,dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
+                        if(! sellPart.contains("1") &&  seat.getCol().equals(CustomerChoose)){
+                            flag=flag+1;
+//                          选中的座位直接加入到 selectList，等待处理
+                            selectList.add(seat);
+//                          如果乘客选到的某个座位能成功，则直接break，换下一个，加快速度
+                            break;
+                        }
+                    }
+                }
+                if (flag==size1){
+//                  所有的座位都能选到，则第一排选座成功。
+//                  如果不成功则遍历下一排
+                    for (DailyTrainSeat selectSeat: selectList){
+                        String sell = selectSeat.getSell();
+                        String Sold = replaceInRange(sell, dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
+                        selectSeat.setSell(Sold);
+                        getSeatList.add(selectSeat);
+                    }
+//                  跳出大循环的标志设置为1
+                    BigLoop=1;
+                    break;
+                }
+            }
+        }
 
         return getSeatList;
     }

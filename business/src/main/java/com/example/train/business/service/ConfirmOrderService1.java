@@ -151,16 +151,21 @@ public class ConfirmOrderService1 {
 //     每一次选座 仅支持同一种座位类型
             ConfirmOrderTicketReq ticketReq0 = passengerTickets.get(0);
             String seatTypeCode = ticketReq0.getSeatTypeCode();
+            List<DailyTrainSeat> dailyTrainSeats = new ArrayList<>();
             if (StrUtil.isNotBlank(ticketReq0.getSeat())) {
                 LOG.info("有选座！！");
-                List<DailyTrainSeat> dailyTrainSeats = selectForChoose(req, seatTypeCode, dailyTrainTicket);
+                 dailyTrainSeats = selectForChoose(req, seatTypeCode, dailyTrainTicket);
                 LOG.info("选中座位:{}", dailyTrainSeats);
-                
             } else {
                 LOG.info("无选座！！");
 //              随机挑几个座位即可
-                List<DailyTrainSeat> dailyTrainSeats = selectForNoneChoose(req, passengerTickets, seatTypeCode, dailyTrainTicket);
+                dailyTrainSeats = selectForNoneChoose(req, passengerTickets, seatTypeCode, dailyTrainTicket);
                 LOG.info("选中座位:{}", dailyTrainSeats);
+            }
+
+            if (dailyTrainSeats.isEmpty()){
+                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR);
+            }else {
                 try {
                     afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, dailyTrainSeats, passengerTickets, confirmOrder);
                 } catch (Exception e) {
@@ -168,6 +173,7 @@ public class ConfirmOrderService1 {
                     throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
                 }
             }
+
         } finally {
             LOG.info("购票流程结束，释放锁！lockKey：{}", lockKey);
             redisTemplate.delete(lockKey);
@@ -254,7 +260,23 @@ public class ConfirmOrderService1 {
         return trainMAP;
         // trainMAP 中包含了按照 row 分组的 DailyTrainSeat 对象列表
     }
+    public static List<DailyTrainSeat> getSelectList(List<DailyTrainSeat> seats, List<String> seatList, DailyTrainTicket dailyTrainTicket){
+        List<DailyTrainSeat> selectList = new ArrayList<>();
 
+        for (String CustomerChoose: seatList){
+            for (DailyTrainSeat seat : seats) {
+                String sell = seat.getSell();
+                String sellPart = getSubstring(sell,dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
+                if(! sellPart.contains("1") && seat.getCol().equals(CustomerChoose)){
+//                  选中的座位直接加入到 selectList，等待处理
+                    selectList.add(seat);
+//                  如果乘客选到的某个座位能成功，则直接break，换下一个，加快速度
+                    break;
+                }
+            }
+        }
+        return selectList;
+    }
 
     private List<DailyTrainSeat> selectForChoose(ConfirmOrderDoReq req, String seatType, DailyTrainTicket dailyTrainTicket){
 
@@ -279,13 +301,9 @@ public class ConfirmOrderService1 {
         List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode,seatType);
 
         int size1 = seatList1.size();
-        int size2 = seatList1.size();
+        int size2 = seatList2.size();
         int BigLoop = 0;
         for (DailyTrainCarriage dailyTrainCarriage : carriageList) {
-
-            if (BigLoop==1){
-                break;
-            }
 //          得到全部的座位
             List<DailyTrainSeat> dailyTrainSeats = dailyTrainSeatService.selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
             HashMap<Integer, List<DailyTrainSeat>> rowMap = handleRows(dailyTrainSeats);
@@ -293,28 +311,46 @@ public class ConfirmOrderService1 {
             for (Map.Entry<Integer, List<DailyTrainSeat>> entry : rowMap.entrySet()) {
 
                 Integer row = entry.getKey();
-                int flag = 0;
 //              这一行的车座信息
-                List<DailyTrainSeat> seats = entry.getValue();
-                List<DailyTrainSeat> selectList = new ArrayList<>();
- //             遍历每一行对应的 DailyTrainSeat 对象列表
-                for (String CustomerChoose: seatList1){
-                    for (DailyTrainSeat seat : seats) {
-                        String sell = seat.getSell();
-                        String sellPart = getSubstring(sell,dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
-                        if(! sellPart.contains("1") &&  seat.getCol().equals(CustomerChoose)){
-                            flag=flag+1;
-//                          选中的座位直接加入到 selectList，等待处理
-                            selectList.add(seat);
-//                          如果乘客选到的某个座位能成功，则直接break，换下一个，加快速度
-                            break;
-                        }
-                    }
-                }
-                if (flag==size1){
+                List<DailyTrainSeat> seats1 = entry.getValue();
+                List<DailyTrainSeat> selectList1 = getSelectList(seats1, seatList1, dailyTrainTicket);
+//                List<DailyTrainSeat> selectList = new ArrayList<>();
+// //             遍历每一行对应的 DailyTrainSeat 对象列表
+//                for (String CustomerChoose: seatList1){
+//                    for (DailyTrainSeat seat : seats1) {
+//                        String sell = seat.getSell();
+//                        String sellPart = getSubstring(sell,dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
+//                        if(! sellPart.contains("1") &&  seat.getCol().equals(CustomerChoose)){
+//                            flag=flag+1;
+////                          选中的座位直接加入到 selectList，等待处理
+//                            selectList.add(seat);
+////                          如果乘客选到的某个座位能成功，则直接break，换下一个，加快速度
+//                            break;
+//                        }
+//                    }
+//                }
+//              对于该行的下一行也进行遍历
+
+                List<DailyTrainSeat> seats2 = rowMap.get(row + 1);
+                List<DailyTrainSeat> selectList2 = getSelectList(seats2, seatList2, dailyTrainTicket);
+//                for (String CustomerChoose: seatList2){
+//                    for (DailyTrainSeat seat : seats2) {
+//                        String sell = seat.getSell();
+//                        String sellPart = getSubstring(sell,dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
+//                        if(! sellPart.contains("1") &&  seat.getCol().equals(CustomerChoose)){
+//                            flag=flag+1;
+////                          选中的座位直接加入到 selectList，等待处理
+//                            selectList.add(seat);
+////                          如果乘客选到的某个座位能成功，则直接break，换下一个，加快速度
+//                            break;
+//                        }
+//                    }
+//                }
+                if (size1== selectList1.size() && size2== selectList2.size()){
 //                  所有的座位都能选到，则第一排选座成功。
 //                  如果不成功则遍历下一排
-                    for (DailyTrainSeat selectSeat: selectList){
+                    selectList1.addAll(selectList2);
+                    for (DailyTrainSeat selectSeat: selectList1){
                         String sell = selectSeat.getSell();
                         String Sold = replaceInRange(sell, dailyTrainTicket.getStartIndex(), dailyTrainTicket.getEndIndex());
                         selectSeat.setSell(Sold);
@@ -324,6 +360,10 @@ public class ConfirmOrderService1 {
                     BigLoop=1;
                     break;
                 }
+            }
+
+            if (BigLoop==1){
+                break;
             }
         }
 

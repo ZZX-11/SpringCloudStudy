@@ -30,6 +30,7 @@ public class BussinessApplication {
         LOG.info("启动成功！！");
         LOG.info("测试地址: \thttp://127.0.0.1:{}{}/hello", env.getProperty("server.port"), env.getProperty("server.servlet.context-path"));
         initFlowRules();
+        LOG.info("限流规则已配置！！");
     }
 
 
@@ -40,13 +41,11 @@ public class BussinessApplication {
         rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
         // Set limit QPS to 20.
         rule.setCount(1);
-
 //        FlowRule rule2 = new FlowRule();
 //        rule2.setResource("hello1");
 //        rule2.setGrade(RuleConstant.FLOW_GRADE_QPS);
 //        // Set limit QPS to 20.
 //        rule2.setCount(1);
-
         rules.add(rule);
 //        rules.add(rule2);
         FlowRuleManager.loadRules(rules);
